@@ -5,6 +5,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import ConnectionScreen from './src/ConnectionScreen';
 import DeviceListScreen from './src/DeviceListScreen';
 import { createStackNavigator } from '@react-navigation/stack';
+import { BtHeadsetConnections } from './src/BtHeadsetConnections';
+import { BtSerialScreen } from "./src/BtSerialScreen";
 
 function HomeScreen({ navigation }) {
     return (
@@ -32,6 +34,8 @@ export default function App() {
             <Drawer.Navigator initialRouteName="Home">
                 <Drawer.Screen name="Home" component={HomeScreen} />
                 <Drawer.Screen name="DeviceStack" component={DeviceStack} />
+                <Drawer.Screen name="BtHeaderConnection" component={BtHeadsetConnections} />
+                <Drawer.Screen name="BtSerialScreen" component={BtSerialScreen} />
             </Drawer.Navigator>
         </NavigationContainer>
     );

@@ -95,7 +95,7 @@ export default class ConnectionScreen extends React.Component<ConnectionScreenPr
             console.log('isConnected?', isConnected);
             if (!isConnected) {
                 // connection = await this.device.connect(this.state.connectionOptions);
-                isConnected = await device.connect();
+                isConnected = await device.connect({});
                 console.log('isConnected2', isConnected);
                 this.addData({
                     data: 'Connection successful',
