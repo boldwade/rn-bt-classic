@@ -1,5 +1,5 @@
 import React from 'react';
-import RNBluetoothClassic, { BluetoothDevice, BluetoothEventSubscription } from 'react-native-bluetooth-classic';
+import RNBluetoothClassic, { BluetoothDevice, BluetoothEventSubscription, StandardOptions } from 'react-native-bluetooth-classic';
 import { Body, Button, Container, Header, Icon, Left, Right, Subtitle, Text, Title } from 'native-base';
 import { FlatList, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
@@ -16,9 +16,7 @@ interface ConnectionScreenState {
     }[];
     isConnected: boolean;
     isPolling: boolean;
-    connectionOptions: {
-        delimiter: string;
-    };
+    connectionOptions: StandardOptions;
     device?: BluetoothDevice;
 }
 
@@ -94,8 +92,8 @@ export default class ConnectionScreen extends React.Component<ConnectionScreenPr
             let isConnected = await device?.isConnected();
             console.log('isConnected?', isConnected);
             if (!isConnected) {
-                // connection = await this.device.connect(this.state.connectionOptions);
-                isConnected = await device.connect({});
+                isConnected = await device.connect({ connectorType: 'rfcomm' });
+                // isConnected = await device.connect({});
                 console.log('isConnected2', isConnected);
                 this.addData({
                     data: 'Connection successful',
@@ -104,8 +102,7 @@ export default class ConnectionScreen extends React.Component<ConnectionScreenPr
                 });
             }
 
-            this.setState({ isConnected, device });
-            this.initializeRead();
+            this.setState({ isConnected, device }, () => this.initializeRead());
         } catch (error) {
             alert('ERROR: ' + error?.message);
             this.addData({
@@ -141,6 +138,7 @@ export default class ConnectionScreen extends React.Component<ConnectionScreenPr
     }
 
     initializeRead() {
+        console.log('initializeRead', this.state.isPolling, !!this.state.device);
         if (!this.state.device) return;
         if (this.state.isPolling) {
             this.readInterval = window.setInterval(() => this.performRead(), 5000);
@@ -162,6 +160,7 @@ export default class ConnectionScreen extends React.Component<ConnectionScreenPr
     }
 
     async performRead() {
+        console.log('performRead');
         if (!this.state.device) return;
         try {
             console.log('Polling for available messages');
@@ -190,6 +189,7 @@ export default class ConnectionScreen extends React.Component<ConnectionScreenPr
      * @param {ReadEvent} event
      */
     async onReceivedData(event) {
+        console.log('onDataReceived', event);
         event.timestamp = new Date();
         this.addData({
             ...event,
