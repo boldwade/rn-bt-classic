@@ -5872,10 +5872,10 @@ react-native-ble-plx@^2.0.2:
   resolved "https://registry.yarnpkg.com/react-native-ble-plx/-/react-native-ble-plx-2.0.2.tgz#0912c50d4d807ed279a2a1043362c96318518154"
   integrity sha512-NjUl5H7bMgNfMma6i+W+wCsfQjOrUxSnLdmYgb8LSas4UZmmsakhEVK4C9/qHm2oxKB+SLR87zD6upZfD/R3sw==
 
-react-native-bluetooth-classic@^1.60.0-rc.7:
-  version "1.60.0-rc.7"
-  resolved "https://registry.yarnpkg.com/react-native-bluetooth-classic/-/react-native-bluetooth-classic-1.60.0-rc.7.tgz#39bf869182a4d5c12c0f073de08d0a0fd7ee1e3b"
-  integrity sha512-jrPLXcev6wQrJK5f69r+y2LF6cZ9rz63pYxn9rMVH/U+zeRNyE5JeFNS/02rnaDqINHz3ucrQdECn7QeLSBrAA==
+react-native-bluetooth-classic@^1.60.0-rc.12:
+  version "1.60.0-rc.12"
+  resolved "https://registry.yarnpkg.com/react-native-bluetooth-classic/-/react-native-bluetooth-classic-1.60.0-rc.12.tgz#e8d97dac440b14364900ed8e0e11556158b1a6fd"
+  integrity sha512-1qbw6KisnUIuIjZVi3N6/2aGTAdx+ngq27wfrn3B4Z+VWK7wt2laaLGx1avSVi72SRl5nlnF2cyO8lm0qMetAA==
   dependencies:
     buffer "^5.4.3"
 

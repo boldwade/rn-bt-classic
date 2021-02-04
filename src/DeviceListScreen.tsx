@@ -38,8 +38,7 @@ interface DeviceListScreenState {
  *
  * From here:
  * - unpaired devices can be paired
- * - paired devices can be connected
- *
+ * - paired devices can be connected *
  * @author kendavidson
  */
 export default class DeviceListScreen extends React.Component<DeviceListScreenProps, DeviceListScreenState> {

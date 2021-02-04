@@ -1,5 +1,5 @@
 import React from 'react';
-import RNBluetoothClassic, { BluetoothDevice, BluetoothEventSubscription, StandardOptions } from 'react-native-bluetooth-classic';
+import RNBluetoothClassic from 'react-native-bluetooth-classic';
 import { Body, Button, Container, Header, Icon, Left, Right, Subtitle, Text, Title } from 'native-base';
 import { FlatList, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
@@ -16,8 +16,8 @@ interface ConnectionScreenState {
     }[];
     isConnected: boolean;
     isPolling: boolean;
-    connectionOptions: StandardOptions;
-    device?: BluetoothDevice;
+    connectionOptions: any; // StandardOptions;
+    device?: any; // BluetoothDevice;
 }
 
 /**
@@ -44,7 +44,7 @@ export default class ConnectionScreen extends React.Component<ConnectionScreenPr
         },
     };
     readInterval: number | undefined;
-    readSubscription: BluetoothEventSubscription | undefined;
+    readSubscription: any; // BluetoothEventSubscription | undefined;
     scannedDataList: FlatList<{ data: string; timestamp: Date; type: string }> | null | undefined;
 
     /**
@@ -56,6 +56,7 @@ export default class ConnectionScreen extends React.Component<ConnectionScreenPr
         // @ts-ignore
         const address = this.props?.route?.params?.address;
         console.log('componentDidMount', address);
+        // @ts-ignore
         const bondedDevices = await RNBluetoothClassic.getBondedDevices();
         const device = bondedDevices.find(x => x.address === address);
         this.connect(device);
@@ -81,7 +82,8 @@ export default class ConnectionScreen extends React.Component<ConnectionScreenPr
         this.uninitializeRead();
     }
 
-    async connect(device: BluetoothDevice | undefined) {
+    async connect(device: any) {
+        // BluetoothDevice | undefined) {
         console.log('connecting', device);
         if (!device) {
             alert('NO VALID DEVICE');
@@ -92,7 +94,7 @@ export default class ConnectionScreen extends React.Component<ConnectionScreenPr
             let isConnected = await device?.isConnected();
             console.log('isConnected?', isConnected);
             if (!isConnected) {
-                isConnected = await device.connect({ connectorType: 'rfcomm' });
+                isConnected = await device.connect({ connectorType: 'a2dp' });
                 // isConnected = await device.connect({});
                 console.log('isConnected2', isConnected);
                 this.addData({
@@ -212,6 +214,7 @@ export default class ConnectionScreen extends React.Component<ConnectionScreenPr
         try {
             console.log(`Attempting to send data ${this.state.text}`);
             const message = this.state.text + '\r';
+            // @ts-ignore
             await RNBluetoothClassic.writeToDevice(this.state.device.address, message);
 
             this.addData({
