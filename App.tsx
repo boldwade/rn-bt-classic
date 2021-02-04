@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, View } from 'react-native';
+import { Button, Platform, UIManager, View } from 'react-native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
 import ConnectionScreen from './src/ConnectionScreen';
@@ -8,12 +8,18 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { BtHeadsetConnections } from './src/BtHeadsetConnections';
 import { BleScreen } from './src/BleScreen';
 import { FlatListRowDelete } from './src/FlatListRowDelete';
+import { TabBarAndShuffle } from './src/TabBarAndShuffle';
+
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+    UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 function HomeScreen({ navigation }) {
     return (
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'space-evenly' }}>
             <Button onPress={() => navigation.navigate('DeviceStack')} title="Go to Device List Screen" />
-            <Button onPress={() => navigation.navigate('FlatListRowDelete')} title="Go to FlatListRowDelete Screen" />
+            <Button onPress={() => navigation.navigate('FlatListRowDelete')} title="Go to FlatListRowDeleteScreen" />
+            <Button onPress={() => navigation.navigate('TabBarAndShuffleScreen')} title="Go to TabBarAndShuffleScreen" />
         </View>
     );
 }
@@ -39,6 +45,7 @@ export default function App() {
                 <Drawer.Screen name="BtHeaderConnection" component={BtHeadsetConnections} />
                 <Drawer.Screen name="BleScreen" component={BleScreen} />
                 <Drawer.Screen name="FlatListRowDelete" component={FlatListRowDelete} />
+                <Drawer.Screen name="TabBarAndShuffleScreen" component={TabBarAndShuffle} />
             </Drawer.Navigator>
         </NavigationContainer>
     );
