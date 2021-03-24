@@ -21,11 +21,14 @@
     "react-native-ble-plx": "^2.0.2",
     "react-native-bluetooth-classic": "^1.60.0-rc.12",
     "react-native-bluetooth-headset-detect": "^2.0.0",
+    "react-native-fast-image": "^8.3.4",
     "react-native-gesture-handler": "^1.9.0",
+    "react-native-keyboard-aware-scroll-view": "^0.9.3",
     "react-native-reanimated": "^1.13.2",
     "react-native-safe-area-context": "^3.1.9",
     "react-native-screens": "^2.15.2",
-    "react-native-view-overflow": "^0.0.5"
+    "react-native-view-overflow": "^0.0.5",
+    "recyclerlistview": "^3.0.5"
   },
   "devDependencies": {
     "@babel/core": "^7.8.4",

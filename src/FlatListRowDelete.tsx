@@ -1,60 +1,65 @@
-import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Button, NativeSyntheticEvent, NativeTouchEvent, StyleSheet, Text, View } from 'react-native';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { ActivityIndicator, Button, NativeScrollEvent, NativeSyntheticEvent, NativeTouchEvent, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { ListRow } from './ListRow';
 import { Separator } from 'native-base';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
+import debounce from "@react-navigation/stack/lib/typescript/src/utils/debounce";
 
 export const FlatListRowDelete = () => {
-    const [isLoading, setLoading] = useState(true);
+    const [isLoading, setLoading] = useState(false);
     const [people, setPeople] = useState<Array<any>>([]);
-    // let [showDate, setShowDate] = useState(false);
+    // const [showDate, setShowDate] = useState(false);
 
-    const addUser = async (count: number = 1) => {
-        setLoading(true);
-        try {
-            const res = await fetch(`https://randomuser.me/api?results=${count}`);
-            const result = await res.json();
-            if (result?.results?.length) {
-                setPeople(prevState => [...prevState, ...result.results]);
-            } else {
-                // eslint-disable-next-line no-alert
-                window.alert('No users to add!');
+    // const dateListRef = useRef<FlatList<any>>(null);
+    // let peopleListRef = useRef<FlatList<any>>(null);
+
+    const addUser = useCallback(
+        async (count: number = 1) => {
+            console.log('addUser', count);
+            if (isLoading) {
+                return;
             }
-        } catch (err) {
-            // eslint-disable-next-line no-alert
-            window.alert('WTF!: ' + JSON.stringify(err));
-        }
-        setLoading(false);
-    };
+
+            setLoading(true);
+            try {
+                const res = await fetch(`https://randomuser.me/api?results=${count}`);
+                const result = await res.json();
+                if (result?.results?.length) {
+                    setPeople(prevState => [...prevState, ...result.results]);
+                } else {
+                    // eslint-disable-next-line no-alert
+                    window.alert('No users to add!');
+                }
+            } catch (err) {
+                // eslint-disable-next-line no-alert
+                window.alert('WTF!: ' + JSON.stringify(err));
+            }
+            setLoading(false);
+        },
+        [isLoading]
+    );
 
     const handleAddUser = (_: NativeSyntheticEvent<NativeTouchEvent>) => addUser(1);
-
-    const removeUser = (index: number) => {
-        setLoading(true);
-        const newPeople = [...people];
-        newPeople.splice(index, 1);
-        setPeople(newPeople);
-        setLoading(false);
-    };
 
     useEffect(() => {
         if (people.length <= 30) {
             addUser(30);
         }
-    }, [people]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
-    const handleSwipe = () => {
-        console.log('handleSwipe');
-        // setShowDate(prevState => !prevState);
-        const p = people.map(x => {
-            return {
-                ...x,
-                showDate: !x.showDate,
-            };
-        });
-        setPeople(p);
-    };
+    // const handleSwipe = () => {
+    //     console.log('handleSwipe');
+    //     setShowDate(prevState => !prevState);
+    //     // const p = people.map(x => {
+    //     //     return {
+    //     //         ...x,
+    //     //         showDate: !x.showDate,
+    //     //     };
+    //     // });
+    //     // setPeople(p);
+    // };
 
     // const renderRightDateList = () => {
     //     return (
@@ -72,50 +77,85 @@ export const FlatListRowDelete = () => {
     //     );
     // };
 
+    const removeUser = useCallback(
+        (index: number) => {
+            setLoading(true);
+            const newPeople = [...people];
+            newPeople.splice(index, 1);
+            setPeople(newPeople);
+            setLoading(false);
+        },
+        [people]
+    );
+
+    const activityIndicator = useMemo(() => <ActivityIndicator animating={isLoading} color={'blue'} size={'large'} style={{ top: '50%', zIndex: 1 }} />, [isLoading]);
+    const renderItem = useCallback(({ item, index }) => <ListRow {...item} key={item?.login?.username} onRemove={() => removeUser(index)} />, [removeUser]);
+    const itemSeparator = () => <Separator style={{ height: 1, backgroundColor: '#e5159b' }} />;
+    const listHeader = () => <Button disabled={isLoading} onPress={handleAddUser} title="Add Person" />;
+    // const renderDateItem = ({ item }) => <ListRowDate key={item?.login?.username} date={item.dob.date} />;
+    // const dummyHeader = () => <View style={{ height: 35 }} />;
+
+    // const renderDatesList = () => (
+    //     <View style={{ width: 100 }}>
+    //         <FlatList
+    //             data={people}
+    //             ref={dateListRef}
+    //             ItemSeparatorComponent={itemSeparator}
+    //             keyExtractor={item => item?.login?.username}
+    //             ListHeaderComponent={dummyHeader}
+    //             renderItem={renderDateItem}
+    //             scrollEnabled={false}
+    //         />
+    //     </View>
+    // );
+    //
+    // const debouncedScroll = debounce((offset: number) => dateListRef?.current?.scrollToOffset({ animated: false, offset }), 50);
+    // const handlePeopleListScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => debouncedScroll(event.nativeEvent.contentOffset.y);
+    const handleEndReached = useCallback(() => {
+        if (isLoading) {
+            return;
+        }
+        addUser(10);
+    }, [addUser, isLoading]);
+
+    // const createPeopleListRef = (instance: string) => {
+    //     peopleListRef.current = instance;
+    // };
+
     return (
         <>
-            <ActivityIndicator animating={isLoading} color={'blue'} size={'large'} style={{ top: '50%' }} />
-            <Swipeable
-                onSwipeableWillClose={handleSwipe}
-                onSwipeableRightWillOpen={handleSwipe}
-                overshootRight={false}
-                renderRightActions={() => (
-                    <View style={{ backgroundColor: 'red' }}>
-                        <Text>Test</Text>
-                    </View>
-                )}
-            >
-                <View style={styles.container}>
-                    <View style={{ alignSelf: 'flex-end', backgroundColor: 'red' }}>
-                        <Text>Test</Text>
-                    </View>
-                    <FlatList
-                        // CellRendererComponent={({ children, item, ...props }) => {
-                        //     return (
-                        //         <View {...props} style={{ overflow: 'visible', zIndex: 999, elevation: 10 }}>
-                        //             {children}
-                        //         </View>
-                        //     );
-                        // }}
-                        // CellRendererComponent={_ => <ViewOverflow />}
-                        data={people}
-                        ItemSeparatorComponent={() => <Separator style={{ height: 1, backgroundColor: '#e5159b' }} />}
-                        keyExtractor={item => item?.login?.username}
-                        ListHeaderComponent={() => <Button disabled={isLoading} onPress={handleAddUser} title="Add Person" />}
-                        renderItem={({ item, index }) => <ListRow {...item} key={item?.login?.username} onRemove={() => removeUser(index)} />}
-                        // contentContainerStyle={{ backgroundColor: 'yellow', overflow: 'visible', width: 300 }}
-                        // // columnWrapperStyle={{ backgroundColor: 'green' }}
-                        // style={{ overflow: 'visible', width: 300, backgroundColor: 'red' }}
-                    />
-                </View>
+            {activityIndicator}
+            <Swipeable overshootRight={false} renderRightActions={() => <View style={{ width: 50 }} />}>
+                {/*<View style={styles.container}>*/}
+                <FlatList
+                    data={people}
+                    // ref={createPeopleListRef}
+                    ItemSeparatorComponent={itemSeparator}
+                    keyExtractor={item => item?.login?.username}
+                    ListHeaderComponent={listHeader}
+                    // ListFooterComponent={activityIndicator}
+                    // onScroll={handlePeopleListScroll}
+                    // onEndReached={handleEndReached}
+                    scrollEnabled={true}
+                    // scrollEventThrottle={}
+                    renderItem={renderItem}
+                    // refreshing={isLoading}
+                    fadingEdgeLength={100}
+                    removeClippedSubviews={false}
+                    // style={{ overflow: 'visible' }}
+                    // contentContainerStyle={{ overflow: 'visible' }}
+                    // getItemLayout={}
+                    // onViewableItemsChanged={}
+                />
+                {/*</View>*/}
             </Swipeable>
         </>
     );
 };
 
-const styles = StyleSheet.create({
-    container: {
-        backgroundColor: '#fff',
-        overflow: 'visible',
-    },
-});
+// const styles = StyleSheet.create({
+//     container: {
+//         backgroundColor: '#fff',
+//         overflow: 'visible',
+//     },
+// });
